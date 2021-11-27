@@ -21,11 +21,11 @@ export default {
             try {
                 await signInWithEmailAndPassword(auth, email, password)
             } catch (e) {
-                console.log(e)
+                commit('setError', e)
                 throw e
             }
         },
-        async register({dispatch}, {email, password, name}) {
+        async register({ dispatch, commit }, { email, password, name }) {
             try {
                 await createUserWithEmailAndPassword(auth, email, password)
                 const uid = await dispatch('getUid')
@@ -34,7 +34,7 @@ export default {
                     name
                 })
             } catch (e) {
-                console.log(e)
+                commit('setError', e)
                 throw e
             }
         },
