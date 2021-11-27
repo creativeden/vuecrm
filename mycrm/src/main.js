@@ -8,14 +8,9 @@ import dateFilter from './filters/date.filter'
 import messagePlugin from './utils/message.plugin'
 import 'materialize-css/dist/js/materialize.min'
 
-// import firebase from 'firebase/app'
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDatabase } from "firebase/database";
-console.log(app);
-
-// import 'firebase/auth'
-// import 'firebase/database'
 
 Vue.config.productionTip = false
 
@@ -34,19 +29,17 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const auth = getAuth();
 const database = getDatabase(app);
 
-// app.auth().onAuthStateChanged(() => {
-//   console.log('test')
-// })
+let myapp
 
-// initializeApp.auth().onAuthStateChanged(() => {
-  
-// })
-
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+onAuthStateChanged(auth, (user) => {
+  if (!myapp) {
+    myapp = new Vue({
+      router,
+      store,
+      render: h => h(App)
+    }).$mount('#app')
+  }
+})
