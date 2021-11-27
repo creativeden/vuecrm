@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBRRlYl1k2q8ycTU3Y3UdmIkWs4_hd3lcE",
@@ -12,6 +13,7 @@ const firebaseConfig = {
 }
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
+const database = getDatabase(app);
 
 export default {
     actions: {
@@ -19,8 +21,31 @@ export default {
             try {
                 await signInWithEmailAndPassword(auth, email, password)
             } catch (e) {
+                console.log(e)
                 throw e
             }
+        },
+        async register({dispatch}, {email, password, name}) {
+            try {
+                await createUserWithEmailAndPassword(auth, email, password)
+                const uid = await dispatch('getUid')
+                await set(ref(getDatabase(), 'users/' + uid + '/info'), {
+                    bill: 100000,
+                    name
+                })
+            } catch (e) {
+                console.log(e)
+                throw e
+            }
+        },
+        getUid() {
+            const user = getAuth().currentUser
+            return user ? user.uid : null
+        },
+        async logout() {
+            await signOut(auth).then(() => {
+                // Sign-out successful.
+            })
         }
     }
 }
