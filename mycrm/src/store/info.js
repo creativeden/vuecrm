@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref } from "firebase/database";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBRRlYl1k2q8ycTU3Y3UdmIkWs4_hd3lcE",
@@ -30,16 +30,7 @@ export default {
         async fetchInfo({dispatch, commit}) {
             try {
                 const uid = await dispatch('getUid')
-
-                // const info = await ref(database, 'users/' + uid + '/info')
-                
-                // onValue(info, (snapshot) => {
-                //     const data = snapshot.val();
-                //     // updateStarCount(postElement, data);
-                // })
-
-                const info = (await set(ref(database, 'users/' + uid + '/info')).once('value')).val()
-                
+                const info = (await ref(database, 'users/' + uid + '/info').once('value')).val()
                 commit('setInfo', info)
             } catch (e) {
 
@@ -47,6 +38,6 @@ export default {
         }
     },
     getters: {
-        info: $ => $.info
+        info: s => s.info
     }
 }

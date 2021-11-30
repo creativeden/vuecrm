@@ -12,7 +12,7 @@ const firebaseConfig = {
     measurementId: "G-YQQ777KMB4"
 }
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const auth = getAuth(app);
 const database = getDatabase(app);
 
 export default {
@@ -29,7 +29,7 @@ export default {
             try {
                 await createUserWithEmailAndPassword(auth, email, password)
                 const uid = await dispatch('getUid')
-                await set(ref(getDatabase(), 'users/' + uid + '/info'), {
+                await set(ref(database, 'users/' + uid + '/info'), {
                     bill: 100000,
                     name
                 })
