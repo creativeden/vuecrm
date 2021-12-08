@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref } from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBRRlYl1k2q8ycTU3Y3UdmIkWs4_hd3lcE",
@@ -12,7 +12,7 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const database = ref(getDatabase(app));
 
 export default {
     state: {
@@ -30,7 +30,7 @@ export default {
         async fetchInfo({dispatch, commit}) {
             try {
                 const uid = await dispatch('getUid')
-                const info = (await ref(database, 'users/' + uid + '/info').once('value')).val()
+                const info = (await get(child(database, `users/${uid}/info`)) ).val()
                 commit('setInfo', info)
             } catch (e) {
 
