@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, push, child, update } from "firebase/database";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBRRlYl1k2q8ycTU3Y3UdmIkWs4_hd3lcE",
@@ -16,11 +16,14 @@ const database = getDatabase(app);
 
 export default {
     actions: {
-        async createCategory({commit, dispatch}, {title, limit}) {
+        async createCategory({ dispatch, commit }, { title, limit }) {
             try {
                 const uid = await dispatch('getUid')
-                const category = await push( child( ref(database, 'users/' + uid + '/categories'), {title, limit} ), {title, limit} ).key
-                return {title, limit, id: category.key}
+                const postData = { title, limit }
+                const newPostKey = push(child(ref(database), 'users')).key
+                const updates = {}
+                updates['/users/' + uid + '/categories/' + newPostKey] = postData
+                return update(ref(database), updates)
             } catch (e) {
                 commit('setError', e)
                 throw e
