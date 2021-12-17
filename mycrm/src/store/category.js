@@ -20,38 +20,12 @@ export default {
             try {
                 const uid = await dispatch('getUid')
 
-                // const dbRef = ref(getDatabase())
-                
-                // const categories = await get(child(dbRef, `users/${uid}/categories`)).then((snapshot) => {
-                //     if (snapshot.exists()) {
-                //         console.log(snapshot.val())
-                //         console.log(categories)
-                //     } else {
-                //         console.log("No data available")
-                //     }
-                // })
-
-                const categories = ref(database, `users/${uid}/categories`)
-                onValue(categories, (snapshot) => {
-                    const data = snapshot.val()
-                    // console.log(snapshot.val())
-                    // return data
-                    // updateStarCount(postElement, data)
-                    const cats = []
-                    Object.keys(categories).forEach(key => {
-                        cats.push({
-                            title: categories[key].title,
-                            limit: categories[key].limit,
-                            id: key
-                        })
-                    })
-                    console.log(data)
-                    return data
+                return onValue(ref(database, `users/${uid}/categories`), (snapshot) => {
+                    const datacat = snapshot.val() || 'Anonymous';
+                    console.log(datacat)
+                }, {
+                    onlyOnce: true
                 })
-
-                // console.log(Object.keys(categories))
-
-                
                 
             } catch (e) {
                 commit('setError', e)
