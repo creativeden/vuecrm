@@ -18,15 +18,18 @@ export default {
     actions: {
         async fetchCategories({ dispatch, commit }) {
             try {
+                
                 const uid = await dispatch('getUid')
-
-                return onValue(ref(database, `users/${uid}/categories`), (snapshot) => {
-                    const datacat = snapshot.val() || 'Anonymous';
-                    console.log(datacat)
+                const categories = await onValue(ref(database, `users/${uid}/categories`), (snapshot) => {
+                    const datacategory = (snapshot.val() && snapshot.val()) || 'Anonymous'
+                    // const datacat = snapshot.val() || 'Anonymous'
+                    console.log(datacategory)
                 }, {
                     onlyOnce: true
                 })
-                
+                // const categories = (await firebase.database().ref(`/users/${uid}/categories`).once('value')).val() || {}
+                return Object.keys(categories).map(key => ({ ...categories[key], id: key }))
+
             } catch (e) {
                 commit('setError', e)
                 throw e
